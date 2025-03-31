@@ -30,19 +30,30 @@ class DataController extends Controller
     public function saveData(Request $request, $type)
     {
         $request->validate([
-            'nombre' => 'required|string',
-            'puntuacion' => 'required|integer'
+            'playerName' => 'required|string',
+            'score' => 'required|integer'
         ]);
 
         switch ($type) {
             case 'posidonias':
-                $data = Posidonia::create($request->all());
+                $data = Posidonia::create([
+                    'nombre' => $request->playerName,
+                    'puntuacion' => $request->score
+                ]);
                 break;
             case 'tortugas':
-                $data = Tortuga::create($request->all());
+                $data = Tortuga::create([
+                    'nombre' => $request->playerName,
+                    'puntuacion' => $request->score
+                ]);
+                // $data = Tortuga::create($request->all());
                 break;
             case 'limpieza':
-                $data = Limpieza::create($request->all());
+                $data = Limpieza::create([
+                    'nombre' => $request->playerName,
+                    'puntuacion' => $request->score
+                ]);
+                // $data = Limpieza::create($request->all());
                 break;
             default:
                 return response()->json(['message' => 'Tipo no válido'], 400);
