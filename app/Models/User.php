@@ -47,4 +47,22 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+    public function shouldShowAds(): bool
+    {
+        // Si el usuario ha pagado para no ver anuncios, no mostrar anuncios
+        if ($this->has_paid_no_ads) {
+            return false;
+        }
+
+        // En cualquier otro caso, mostrar anuncios
+        return true;
+    }
+
+    public function disableAds(): void
+    {
+        $this->has_paid_no_ads = true;
+        $this->no_ads_purchased_at = now();
+        $this->save();
+    }
 }

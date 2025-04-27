@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -44,4 +45,8 @@ Route::middleware('auth:sanctum',EnsureEmailIsVerifiedJson::class)->group(functi
     Route::post('/logout', [UserController::class, 'logout']);
     Route::post('/save/{type}', [DataController::class, 'saveData']);
     Route::get('/data/{type}', [DataController::class, 'getData']);
+    Route::post('/ads/purchase', [AdvertisementController::class, 'registerAdPurchase']);
+    Route::get('/ads/status', [AdvertisementController::class, 'getUserAdStatus']);
+
+
 });
