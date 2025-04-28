@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\EnsureEmailIsVerifiedJson;
+use App\Models\User;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Notifications\CustomVerifyEmail;
 use Laravel\Socialite\Facades\Socialite;
