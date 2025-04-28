@@ -22,7 +22,7 @@ Route::get('/auth/google/callback', function () {
     ['email' => $googleUser->getEmail()],
     ['name' => $googleUser->getName(), 'email_verified_at' => now()]
   );
-  $token = $user->createToken('mobile')->plainTextToken;
+  $token = $user->createToken('auth_token')->plainTextToken;
   return redirect("myapp://auth-callback?token=$token");
 });
 
