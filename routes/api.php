@@ -24,7 +24,7 @@ Route::get('/auth/google/callback', function () {
     ['name' => $googleUser->getName(), 'email_verified_at' => now()]
   );
   $token = $user->createToken('auth_token')->plainTextToken;
-  return redirect("myapp://auth-callback?token=$token");
+  return redirect("trasmapiapp://auth-callback?token=$token");
 });
 
 Route::middleware('auth:sanctum')->post('/resend-verification', function (Request $request) {
