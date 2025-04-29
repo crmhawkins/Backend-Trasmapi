@@ -15,6 +15,7 @@ use Laravel\Socialite\Facades\Socialite;
 
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
+Route::get('/anuncio', [AnuncioController::class, 'mostrar']);
 
 Route::get('/auth/google/redirect', fn() => Socialite::driver('google')->stateless()->redirect());
 Route::get('/auth/google/callback', function () {
