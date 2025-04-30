@@ -17,6 +17,8 @@ use Laravel\Socialite\Facades\Socialite;
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::get('/anuncio', [AnuncioController::class, 'mostrar']);
+Route::post('/save/{type}', [DataController::class, 'saveData']);
+Route::get('/data/{type}', [DataController::class, 'getData']);
 
 Route::get('/auth/google/redirect', fn() => Socialite::driver('google')->stateless()->redirect());
 Route::get('/auth/google/callback', function () {
@@ -44,10 +46,9 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
     return response()->json(['message' => 'Correo verificado con éxito']);
 })->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
 
+
 Route::middleware('auth:sanctum',EnsureEmailIsVerifiedJson::class)->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
-    Route::post('/save/{type}', [DataController::class, 'saveData']);
-    Route::get('/data/{type}', [DataController::class, 'getData']);
     Route::post('/ads/purchase', [AdvertisementController::class, 'registerAdPurchase']);
     Route::get('/ads/status', [AdvertisementController::class, 'getUserAdStatus']);
 
