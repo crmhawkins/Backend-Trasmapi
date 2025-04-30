@@ -52,7 +52,8 @@ class UserController extends Controller
             'message' => 'Login exitoso',
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user
+            'user' => $user,
+            'ads_removed' => $user->has_paid_no_ads,
         ], 200);
     }
 
