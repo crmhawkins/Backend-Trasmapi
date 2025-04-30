@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdvertisementController;
+use App\Http\Controllers\AnuncioController;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
