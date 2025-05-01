@@ -39,7 +39,7 @@ class AdvertisementController extends Controller
 
         return response()->json([
             'message' => 'Compra registrada correctamente',
-            'show_ads' => false
+            'ads_removed' => 1
         ]);
     }
 
