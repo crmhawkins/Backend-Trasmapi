@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Anuncio;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class AnuncioController extends Controller
@@ -13,12 +14,10 @@ class AnuncioController extends Controller
         $anuncios = Anuncio::latest()->paginate(10);
         return view('anuncios.index', compact('anuncios'));
     }
-
     public function create()
     {
         return view('anuncios.create');
     }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -41,13 +40,11 @@ class AnuncioController extends Controller
 
         return redirect()->route('anuncios.index')->with('success', 'Anuncio creado correctamente.');
     }
-
     public function edit($id)
     {
         $anuncio = Anuncio::findOrFail($id);
         return view('anuncios.edit', compact('anuncio'));
     }
-
     public function update(Request $request, $id)
     {
         $anuncio = Anuncio::findOrFail($id);
@@ -86,5 +83,18 @@ class AnuncioController extends Controller
             'media' => asset('storage/' . $anuncio->media),
             'link' => $anuncio->link,
         ]);
+    }
+    public function destroy($id)
+    {
+        $anuncio = Anuncio::findOrFail($id);
+
+        // Elimina el archivo multimedia
+        if ($anuncio->media) {
+            Storage::disk('public')->delete($anuncio->media);
+        }
+
+        $anuncio->delete();
+
+        return redirect()->route('anuncios.index')->with('success', 'Anuncio eliminado.');
     }
 }
