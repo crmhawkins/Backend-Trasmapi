@@ -71,36 +71,51 @@ Route::post('/auth/apple/callback', function (Request $request) {
         'token' => 'required',
     ]);
 
+    $identityToken = $request->input('token');
     $appleId = $request->input('apple_id');
     $email = $request->input('email');
-    $name = $request->input('name');
-    $identityToken = $request->input('token');
+    $name = $request->input('name') ?? 'Usuario Apple';
 
-    // ✅ Validar el JWT firmado por Apple
     try {
+        // 1. Obtener claves públicas de Apple
         $applePublicKeys = Http::get('https://appleid.apple.com/auth/keys')->json();
         $decoded = JWT::decode($identityToken, JWK::parseKeySet($applePublicKeys), ['RS256']);
+
+        // 2. Validar audiencia e emisor
+        if ($decoded->iss !== 'https://appleid.apple.com') {
+            return response()->json(['error' => 'Emisor inválido'], 401);
+        }
+
+        if ($decoded->aud !== 'com.hawkins.trasmapi') { // 👈 usa tu bundle ID exacto aquí
+            return response()->json(['error' => 'Audiencia inválida'], 401);
+        }
+
+        // 3. Coincide con el apple_id recibido
+        if ($decoded->sub !== $appleId) {
+            return response()->json(['error' => 'Apple ID inválido'], 401);
+        }
+
     } catch (\Exception $e) {
-        return response()->json(['error' => 'Token inválido de Apple', 'debug' => $e->getMessage()], 401);
+        return response()->json(['error' => 'Token de Apple inválido', 'debug' => $e->getMessage()], 401);
     }
 
-    // ✅ Buscar o crear usuario
+    // 4. Buscar o crear usuario
     $user = User::where('apple_id', $appleId)->first();
-
     if (!$user) {
         if (!$email) {
-            return response()->json(['error' => 'No se pudo obtener el email del usuario'], 422);
+            return response()->json(['error' => 'No se recibió email del usuario'], 422);
         }
 
         $user = User::create([
-            'name' => $name ?? 'Apple User',
+            'name' => $name,
             'email' => $email,
             'apple_id' => $appleId,
             'email_verified_at' => now(),
+            'password' => bcrypt(Str::random(16)), // por si luego quieres login normal
         ]);
     }
 
-    // ✅ Crear token
+    // 5. Token y respuesta
     $token = $user->createToken('auth_token')->plainTextToken;
     $hasPaidNoAds = $user->has_paid_no_ads ? '1' : '0';
 
