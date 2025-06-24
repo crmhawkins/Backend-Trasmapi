@@ -14,15 +14,17 @@ class AdvertisementController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getUserAdStatus()
-    {
-        $user = Auth::user();
+	public function getUserAdStatus()
+	{
+		$user = Auth::user();
 
-        return response()->json([
-            'has_paid_no_ads' => $user->has_paid_no_ads,
-            'show_ads' => $user->shouldShowAds(),
-        ]);
-    }
+		return response()->json([
+			'has_paid_no_ads' => $user->has_paid_no_ads,
+			'show_ads' => $user->shouldShowAds(),
+			'purchase_id' => $user->purchase_id,
+			'product_id' => $user->product_id,
+		]);
+	}
 
     /**
      * Registra una compra para eliminar anuncios
@@ -31,16 +33,28 @@ class AdvertisementController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function registerAdPurchase(Request $request)
-    {
-        $user = Auth::user();
+	{
+		$user = Auth::user();
 
+		// Validar que llegan los datos esperados
+		$validated = $request->validate([
+			'purchaseId' => 'required|string',
+			'productId' => 'required|string',
+		]);
 
-        $user->disableAds();
+		// Guardar los campos
+		$user->update([
+			'has_paid_no_ads' => true,
+			'no_ads_purchased_at' => now(),
+			'purchase_id' => $validated['purchaseId'],
+			'product_id' => $validated['productId'],
+		]);
 
-        return response()->json([
-            'message' => 'Compra registrada correctamente',
-            'ads_removed' => 1
-        ]);
-    }
+		return response()->json([
+			'message' => 'Compra registrada correctamente',
+			'ads_removed' => 1
+		]);
+	}
+
 
 }
