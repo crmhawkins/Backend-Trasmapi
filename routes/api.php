@@ -124,3 +124,10 @@ Route::post('/auth/apple/callback', function (Request $request) {
         'ads_removed' => $hasPaidNoAds,
     ]);
 });
+
+Route::middleware('auth:sanctum')->delete('/user/delete', function (Request $request) {
+    $user = $request->user();
+    $user->delete();
+
+    return response()->json(['message' => 'Cuenta eliminada']);
+});
